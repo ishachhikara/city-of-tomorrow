@@ -1,0 +1,10 @@
+{
+  "description": "Helps urban planners explore infrastructure challenges, visualize AI-recommended city improvements in 3D, and compare proposed plans with illustrative impact metrics.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
