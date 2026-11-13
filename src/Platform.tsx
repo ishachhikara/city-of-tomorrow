@@ -5,7 +5,7 @@ import "./platform.css";
 type PageId="overview"|"projects"|"explorer"|"studio"|"visualization"|"recommendations"|"simulation"|"comparison"|"sustainability"|"reports";
 type Project={id:number;name:string;city:string;area:string;objective:string;budget:string;status:string;updated:string};
 const nav:{id:PageId;label:string;icon:IconName;step:string}[]=[
-["overview","Overview","layers","01"],["projects","Projects","build","02"],["explorer","City Explorer","pin","03"],["studio","Urban Planning Studio","city","04"],["visualization","3D City Visualization","rotate","05"],["recommendations","AI Recommendations","spark","06"],["simulation","Simulation Lab","play","07"],["comparison","Scenario Comparison","layers","08"],["sustainability","Sustainability Analysis","leaf","09"],["reports","Reports & Export","download","10"]
+["overview","Overview","layers","01"],["projects","Projects","build","02"],["explorer","City Explorer","pin","03"],["studio","Urban Planning Studio","city","04"],["visualization","3D City Visualization","rotate","05"],["recommendations","Planning Recommendations","spark","06"],["simulation","Simulation Lab","play","07"],["comparison","Scenario Comparison","layers","08"],["sustainability","Sustainability Analysis","leaf","09"],["reports","Reports & Export","download","10"]
 ].map(([id,label,icon,step])=>({id:id as PageId,label,icon:icon as IconName,step}));
 const initial:Project[]=[
 {id:1,name:"Central Mobility Plan 2040",city:"Aurora City",area:"Central District · Sector 12",objective:"Reduce traffic congestion",budget:"$85M",status:"Active",updated:"Today"},
@@ -18,7 +18,7 @@ function Btn({children,onClick,secondary=false,disabled=false}:{children:React.R
 function Scene({ids,mode="proposed",compact=false,labels=true}:{ids:string[];mode?:"existing"|"proposed";compact?:boolean;labels?:boolean}){
  const [zoom,setZoom]=useState(compact ? .74 : .9),[rotation,setRotation]=useState(-30),[view,setView]=useState(mode);
  useEffect(()=>setView(mode),[mode]);
- return <div className={`mp-scene ${compact?"compact":""} ${labels?"":"hide-labels"}`}><CityScene mode={view} proposal={ids[0]||"flyover"} proposals={ids} showInfra zoom={zoom} rotation={rotation} onRotation={setRotation}/>{!compact&&<><div className="mp-scene-switch"><button className={view==="existing"?"active":""} onClick={()=>setView("existing")}>Existing</button><button className={view==="proposed"?"active":""} onClick={()=>setView("proposed")}>Proposed</button></div><div className="mp-scene-tools"><button onClick={()=>setRotation(x=>x+15)}><Icon name="rotate"/></button><button onClick={()=>setZoom(x=>Math.min(1.2,x+.08))}><Icon name="plus"/></button><button onClick={()=>setZoom(x=>Math.max(.62,x-.08))}><Icon name="minus"/></button><button onClick={()=>{setZoom(.9);setRotation(-30);}}><Icon name="reset"/></button></div></>}</div>;
+ return <div className={`mp-scene ${compact?"compact":""} ${labels?"":"hide-labels"}`}><CityScene mode={view} proposal={ids[0]||"flyover"} showInfra zoom={zoom} rotation={rotation} onRotation={setRotation}/>{!compact&&<><div className="mp-scene-switch"><button className={view==="existing"?"active":""} onClick={()=>setView("existing")}>Existing</button><button className={view==="proposed"?"active":""} onClick={()=>setView("proposed")}>Proposed</button></div><div className="mp-scene-tools"><button onClick={()=>setRotation(x=>x+15)}><Icon name="rotate"/></button><button onClick={()=>setZoom(x=>Math.min(1.2,x+.08))}><Icon name="plus"/></button><button onClick={()=>setZoom(x=>Math.max(.62,x-.08))}><Icon name="minus"/></button><button onClick={()=>{setZoom(.9);setRotation(-30);}}><Icon name="reset"/></button></div></>}</div>;
 }
 function Overview({go,project,applied}:{go:(p:PageId)=>void;project:Project;applied:string[]}){
  return <div className="mp-page"><Header eyebrow="PLANNING COMMAND CENTRE" title="City planning overview" description="A unified view of your active urban transformation programme." action={<Btn onClick={()=>go("projects")}><Icon name="plus"/> Create New Project</Btn>}/><div className="mp-overview-grid"><section className="mp-hero-panel"><div className="mp-hero-copy"><span className="mp-kicker">ACTIVE PROJECT</span><h2>{project.name}</h2><p>Coordinated mobility and public-realm upgrades for {project.area}, with decision support across feasibility, sustainability and cost.</p><div className="mp-hero-meta"><span><Icon name="pin"/>{project.city}</span><span>Budget {project.budget}</span><span className="mp-live-dot">Demo model</span></div><div className="mp-hero-actions"><Btn onClick={()=>go("studio")}>Open Planning Studio</Btn><Btn secondary onClick={()=>go("visualization")}>View 3D City</Btn></div></div><div className="mp-hero-scene"><Scene ids={applied} compact/></div></section><section className="mp-stat-strip">{[["Active projects",String(1).padStart(2,"0"),"Current workspace"],["Critical problems","05","Illustrative diagnostics"],["Applied proposals",String(applied.length).padStart(2,"0"),"Shared workflow"],["Planning readiness",applied.length?"84%":"62%","Illustrative assessment"]].map(x=><div key={x[0]}><span>{x[0]}</span><strong>{x[1]}</strong><small>{x[2]}</small></div>)}</section><section className="mp-panel mp-problem-summary"><div className="mp-section-title"><div><span>URBAN DIAGNOSTICS</span><h3>Major planning problems</h3></div><button onClick={()=>go("studio")}>Open studio</button></div>{problems.slice(0,4).map(x=><div className="mp-problem-row" key={x.id}><span className="mp-square-icon"><Icon name={x.icon}/></span><div><strong>{x.label}</strong><small>{x.detail}</small></div><div className="mp-severity"><i style={{width:`${x.score}%`}}/></div><b>{x.score}</b></div>)}</section><section className="mp-panel mp-rec-summary"><div className="mp-section-title"><div><span>PLANNING PRIORITIES</span><h3>Recommended interventions</h3></div><button onClick={()=>go("recommendations")}>View all</button></div>{proposals.slice(0,3).map((x,i)=><button className="mp-rec-row" key={x.id} onClick={()=>go("recommendations")}><span>0{i+1}</span><div><strong>{x.fullName}</strong><small>{x.cost} · {x.feasibility} feasibility</small></div><em>{x.impact}</em><Icon name="chevron"/></button>)}</section></div></div>;
@@ -42,7 +42,119 @@ function Studio({selected,setSelected,applied,setApplied}:{selected:string;setSe
  return <div className="mp-page mp-studio-page"><Header eyebrow="CORE WORKSPACE" title="Urban Planning Studio" description="Diagnose constraints and apply infrastructure improvements to the shared city model."/><div className="mp-studio"><aside className="mp-studio-panel"><span className="mp-kicker">01 · EXISTING PROBLEMS</span><h3>Urban constraints</h3><p>Select a diagnosed issue to focus the planning model.</p><div className="mp-studio-list">{problems.map(x=><button className={problem===x.id?"active":""} key={x.id} onClick={()=>{setProblem(x.id);const m=proposals.find(p=>p.problem===x.label)||(x.id==="gaps"?proposals.find(p=>p.id==="widen"):undefined);if(m)setSelected(m.id);}}><span><Icon name={x.icon}/></span><div><strong>{x.label}</strong><small>{x.detail}</small></div><b>{x.score}</b></button>)}</div><div className="mp-diagnostic"><span>MODEL FINDING</span><p>Peak-hour delay is concentrated at the central four-arm junction. All findings are illustrative.</p></div></aside><section className="mp-studio-city"><div className="mp-studio-bar"><span><i/> SHARED CITY MODEL</span><strong>{current.location}</strong><em>{applied.length} applied</em></div><Scene ids={applied.length?applied:[selected]}/><div className="mp-studio-actions"><button disabled={!history.length} onClick={()=>{if(history.length){setApplied(history.at(-1)!);setHistory(h=>h.slice(0,-1));}}}><Icon name="reset"/> Undo</button><button disabled={!applied.length} onClick={()=>commit([])}><Icon name="reset"/> Reset All</button><button className={applied.includes(selected)?"applied":""} onClick={()=>{if(!applied.includes(selected))commit([...applied,selected]);}}><Icon name="check"/>{applied.includes(selected)?"Proposal Applied":"Apply Proposal"}</button></div></section><aside className="mp-studio-panel right"><span className="mp-kicker">02 · PROPOSED IMPROVEMENTS</span><h3>Intervention library</h3><p>Select an improvement to preview it on the 3D model.</p><div className="mp-improvement-list">{proposals.map(x=><button className={selected===x.id?"active":""} key={x.id} onClick={()=>setSelected(x.id)}><span><Icon name={x.icon}/></span><div><strong>{x.fullName}</strong><small>{x.cost} · {x.impact}</small></div><Icon name={applied.includes(x.id)?"check":"chevron"}/></button>)}</div><div className="mp-selection-detail"><span>SELECTED PROPOSAL</span><strong>{current.solution}</strong><dl><div><dt>Feasibility</dt><dd>{current.feasibility}</dd></div><div><dt>Timeline</dt><dd>{current.timeline}</dd></div></dl></div></aside></div></div>;
 }
 function Visualization({selected,applied}:{selected:string;applied:string[]}){const [labels,setLabels]=useState(true);return <div className="mp-page mp-viz-page"><Header eyebrow="DIGITAL TWIN VIEWER" title="3D City Visualization" description="Inspect the existing city and applied infrastructure in an immersive architectural model." action={<span className="mp-demo-badge">DEMONSTRATION MODEL</span>}/><div className="mp-viz-toolbar"><div><span className="mp-live-dot">Model synchronized</span><strong>Central Junction · Sector 12</strong></div><label className="mp-check"><input type="checkbox" checked={labels} onChange={e=>setLabels(e.target.checked)}/><i/>Infrastructure labels</label><span>{applied.length} applied interventions</span></div><div className="mp-immersive-scene"><Scene ids={applied.length?applied:[selected]} labels={labels}/><div className="mp-infra-label fly"><span>PROPOSED</span>Applied infrastructure</div><div className="mp-infra-label junction"><span>JUNCTION</span>Central intersection</div><div className="mp-viz-data"><span>MODEL EXTENT<strong>4.8 km²</strong></span><span>BUILDINGS<strong>284</strong></span><span>ROAD NETWORK<strong>18.6 km</strong></span><span>COORDINATE VIEW<strong>35° / 142°</strong></span></div></div></div>;}
-function Recommendations({selected,setSelected,applied,setApplied,go}:{selected:string;setSelected:(s:string)=>void;applied:string[];setApplied:React.Dispatch<React.SetStateAction<string[]>>;go:(p:PageId)=>void}){return <div className="mp-page"><Header eyebrow="PLANNING DECISION SUPPORT" title="Planning recommendations" description="Ranked infrastructure interventions based on the demonstration diagnostic model." action={<span className="mp-demo-badge">ILLUSTRATIVE ASSESSMENT</span>}/><div className="mp-recommendation-grid">{proposals.map((p,i)=><article className={`mp-recommendation-card ${selected===p.id?"selected":""}`} key={p.id}><header><span className="mp-rec-number">0{i+1}</span><span className="mp-square-icon"><Icon name={p.icon}/></span><div><small>RECOMMENDED INTERVENTION</small><h3>{p.fullName}</h3></div><em>{p.feasibility}</em></header><p><strong>Detected problem:</strong> {p.problem}. {p.solution} is recommended for further feasibility assessment.</p><div className="mp-rec-facts">{[["Estimated cost",p.cost],["Land requirement",p.land],["Expected benefit",p.impact],["Timeline",p.timeline]].map(x=><div key={x[0]}><span>{x[0]}</span><strong>{x[1]}</strong></div>)}</div><div className="mp-rec-analysis"><div><span>Environmental impact</span><p>{p.environment}</p></div><div><span>Possible drawback</span><p>{p.drawbacks}</p></div></div><footer><button onClick={()=>{setSelected(p.id);go("visualization");}}>View in 3D</button><button onClick={()=>{setSelected(p.id);setApplied(a=>a.includes(p.id)?a:[...a,p.id]);go("studio");}}>{applied.includes(p.id)?"Already applied":"Add to Planning Studio"}</button><button className="primary" onClick={()=>{setSelected(p.id);go("comparison");}}>Compare Alternatives</button></footer></article>)}</div></div>;}
+
+function Recommendations({
+  selected,
+  setSelected,
+  applied,
+  setApplied,
+  go,
+}: {
+  selected: string;
+  setSelected: (s: string) => void;
+  applied: string[];
+  setApplied: React.Dispatch<React.SetStateAction<string[]>>;
+  go: (p: PageId) => void;
+}) {
+  return (
+    <div className="mp-page">
+      <Header
+        eyebrow="URBAN PLANNING GUIDANCE"
+        title="Planning Recommendations"
+        description="Explore proposed infrastructure improvements, compare feasibility and select interventions for your city."
+        action={<span className="mp-demo-badge">PLANNING WORKSPACE</span>}
+      />
+
+      <div className="mp-recommendation-grid">
+        {proposals.map((p, i) => (
+          <article
+            className={`mp-recommendation-card ${
+              selected === p.id ? "selected" : ""
+            }`}
+            key={p.id}
+          >
+            <header>
+              <span className="mp-rec-number">0{i + 1}</span>
+              <span className="mp-square-icon">
+                <Icon name={p.icon} />
+              </span>
+              <div>
+                <small>RECOMMENDED INTERVENTION</small>
+                <h3>{p.fullName}</h3>
+              </div>
+              <em>{p.feasibility}</em>
+            </header>
+
+            <p>
+              <strong>Detected problem:</strong> {p.problem}. {p.solution} is
+              recommended for further feasibility assessment.
+            </p>
+
+            <div className="mp-rec-facts">
+              {[
+                ["Estimated cost", p.cost],
+                ["Land requirement", p.land],
+                ["Expected benefit", p.impact],
+                ["Timeline", p.timeline],
+              ].map((x) => (
+                <div key={x[0]}>
+                  <span>{x[0]}</span>
+                  <strong>{x[1]}</strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="mp-rec-analysis">
+              <div>
+                <span>Environmental impact</span>
+                <p>{p.environment}</p>
+              </div>
+              <div>
+                <span>Possible drawback</span>
+                <p>{p.drawbacks}</p>
+              </div>
+            </div>
+
+            <footer>
+              <button
+                onClick={() => {
+                  setSelected(p.id);
+                  go("visualization");
+                }}
+              >
+                View in 3D
+              </button>
+
+              <button
+                onClick={() => {
+                  setSelected(p.id);
+                  setApplied((a) =>
+                    a.includes(p.id) ? a : [...a, p.id]
+                  );
+                  go("studio");
+                }}
+              >
+                {applied.includes(p.id)
+                  ? "Already applied"
+                  : "Add to Planning Studio"}
+              </button>
+
+              <button
+                className="primary"
+                onClick={() => {
+                  setSelected(p.id);
+                  go("comparison");
+                }}
+              >
+                Compare Alternatives
+              </button>
+            </footer>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
 function calculate(ids:string[],budget:number,traffic:number,green:number,objective:string){
  const chosen=ids.map(id=>proposals.find(p=>p.id===id)).filter(Boolean);const cost=chosen.reduce((s,p)=>s+Number((p!.cost.match(/[\d.]+/)||["0"])[0]),0);const factor=Math.min(1.25,Math.max(.25,budget/(cost||1)));
  const mobility=Math.min(65,Math.max(0,((ids.includes("flyover")?18:0)+(ids.includes("signals")?13:0)+(ids.includes("widen")?10:0)+traffic*.18)*factor));

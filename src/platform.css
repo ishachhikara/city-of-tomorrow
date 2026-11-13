@@ -2533,3 +2533,406 @@
     box-shadow: none;
   }
 }
+
+/* =========================================
+   SATELLITE-STYLE CITY VIEW
+========================================= */
+
+.city-viewport {
+  position: relative;
+  overflow: hidden;
+}
+
+.scene-map-controls {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 30;
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  background: rgba(8, 17, 28, .88);
+  backdrop-filter: blur(12px);
+}
+
+.scene-map-controls button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #a8b8c9;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.scene-map-controls button.active {
+  background: #1c8195;
+  color: #fff;
+}
+
+.satellite-view .city-stage {
+  filter: saturate(1.18) contrast(1.08);
+}
+
+.satellite-view .ground-grid {
+  background-color: #293d36;
+  background-image:
+    radial-gradient(ellipse at 15% 20%, rgba(105,135,76,.42), transparent 25%),
+    radial-gradient(ellipse at 80% 75%, rgba(119,139,75,.36), transparent 24%),
+    radial-gradient(ellipse at 55% 18%, rgba(80,111,69,.35), transparent 22%),
+    linear-gradient(135deg, #34483c, #253c36 45%, #3b4938);
+}
+
+.satellite-view .satellite-terrain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .48;
+  background-image:
+    radial-gradient(ellipse at 25% 30%, rgba(154,160,105,.2) 0 2px, transparent 3px),
+    radial-gradient(ellipse at 70% 65%, rgba(190,170,115,.16) 0 2px, transparent 4px),
+    repeating-linear-gradient(25deg, transparent 0 18px, rgba(210,205,160,.035) 19px 21px);
+  background-size: 70px 65px, 90px 85px, 100% 100%;
+}
+
+.satellite-view .building {
+  background: linear-gradient(135deg, #9a9b8a, #5d6a62 55%, #3d5149);
+  border: 1px solid rgba(220,220,190,.24);
+  box-shadow: 4px 5px 0 rgba(0,0,0,.28);
+}
+
+.satellite-view .building .building-top {
+  background: linear-gradient(135deg, #b5b39b, #69796b);
+}
+
+.satellite-view .park {
+  background: #476b42;
+  border-color: rgba(173,195,118,.35);
+}
+
+.satellite-view .road {
+  background-color: #555b58;
+}
+
+.satellite-view .road i {
+  background: rgba(225,220,185,.6);
+}
+
+.street-view .ground-grid {
+  background-color: #182c3a;
+}
+
+/* =========================================
+   ELEVATED FLYOVER MODEL
+========================================= */
+
+.flyover-model {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.flyover-route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.flyover-shadow {
+  fill: none;
+  stroke: rgba(0,0,0,.52);
+  stroke-width: 94;
+  stroke-linecap: round;
+  filter: blur(8px);
+}
+
+.flyover-deck-outline {
+  fill: none;
+  stroke: #26333b;
+  stroke-width: 78;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.flyover-deck {
+  fill: none;
+  stroke: #87969b;
+  stroke-width: 62;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.flyover-lane {
+  fill: none;
+  stroke: #e5d8a4;
+  stroke-width: 2.5;
+  stroke-dasharray: 17 14;
+  opacity: .95;
+}
+
+.flyover-pillars path {
+  fill: none;
+  stroke: #b4b9b3;
+  stroke-width: 18;
+  stroke-linecap: square;
+  filter: drop-shadow(3px 4px 2px rgba(0,0,0,.35));
+}
+
+.flyover-bases rect {
+  fill: #727f7d;
+  stroke: #c0c4b8;
+  stroke-width: 2;
+}
+
+.flyover-node {
+  fill: #f0b65a;
+  stroke: #fff2d4;
+  stroke-width: 5;
+}
+
+.flyover-point,
+.flyover-label {
+  position: absolute;
+  z-index: 15;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 5px;
+  background: rgba(8,18,28,.9);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .7px;
+  white-space: nowrap;
+}
+
+.flyover-point.entry {
+  left: 2%;
+  top: 55%;
+  color: #ffd28a;
+}
+
+.flyover-point.exit {
+  right: 2%;
+  top: 55%;
+  color: #ffd28a;
+}
+
+.flyover-label {
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  border-color: rgba(85,201,223,.5);
+  color: #8eeaff;
+  background: rgba(7,28,39,.94);
+  font-size: 10px;
+}
+
+@media (max-width: 600px) {
+  .scene-map-controls {
+    top: 10px;
+    right: 10px;
+  }
+
+  .scene-map-controls button {
+    padding: 7px 8px;
+    font-size: 10px;
+  }
+
+  .flyover-label {
+    font-size: 8px;
+  }
+}
+
+/* =========================================
+   READABILITY UPGRADE — CITY OF TOMORROW
+========================================= */
+
+/* Sidebar */
+.mp-brand strong { font-size: 16px; }
+.mp-brand span { font-size: 10px; }
+
+.mp-sidebar nav button span { font-size: 13px; }
+.mp-sidebar nav button small { font-size: 10px; }
+
+.mp-sidebar-project > span { font-size: 10px; }
+.mp-sidebar-project strong { font-size: 13px; }
+.mp-sidebar-project small { font-size: 10px; }
+
+.mp-sidebar-user strong { font-size: 12px; }
+.mp-sidebar-user small { font-size: 10px; }
+
+/* Top navigation */
+.mp-topbar > div:first-of-type span,
+.mp-topbar > div:first-of-type strong { font-size: 11px; }
+
+.mp-top-project { font-size: 11px; }
+.mp-demo-badge { font-size: 10px; }
+
+/* Page headings */
+.mp-page-header > div > span { font-size: 10px; }
+.mp-page-header h1 { font-size: 30px; }
+.mp-page-header p { font-size: 14px; }
+
+.mp-button { font-size: 13px; min-height: 38px; }
+.mp-kicker { font-size: 10px; }
+
+/* Sections */
+.mp-section-title span { font-size: 10px; }
+.mp-section-title h3 { font-size: 16px; }
+.mp-section-title button { font-size: 12px; }
+
+/* Overview */
+.mp-hero-copy h2 { font-size: 30px; }
+.mp-hero-copy > p { font-size: 14px; }
+.mp-hero-meta { font-size: 12px; }
+
+.mp-stat-strip span,
+.mp-stat-strip small { font-size: 11px; }
+.mp-stat-strip strong { font-size: 25px; }
+
+.mp-problem-row strong,
+.mp-rec-row strong { font-size: 13px; }
+
+.mp-problem-row small,
+.mp-rec-row small { font-size: 11px; }
+
+.mp-problem-row > b { font-size: 12px; }
+.mp-rec-row em { font-size: 11px; }
+
+.mp-activity-row strong { font-size: 12px; }
+.mp-activity-row small { font-size: 11px; }
+
+/* Project cards */
+.mp-project-toolbar strong { font-size: 14px; }
+.mp-project-toolbar span { font-size: 11px; }
+
+.mp-project-toolbar input,
+.mp-search input { font-size: 12px; }
+
+.mp-project-thumb > span { font-size: 10px; }
+.mp-project-body > small { font-size: 11px; }
+.mp-project-body h3 { font-size: 17px; }
+.mp-project-body dt { font-size: 11px; }
+.mp-project-body dd { font-size: 12px; }
+.mp-project-foot > span,
+.mp-project-foot button { font-size: 11px; }
+
+/* Forms and modals */
+.mp-form-grid label { font-size: 12px; }
+.mp-form-grid input,
+.mp-form-grid select,
+.mp-sim-controls select { font-size: 13px; }
+
+.mp-modal h2 { font-size: 22px; }
+
+/* Explorer */
+.mp-area-option > span { font-size: 11px; }
+.mp-area-option strong { font-size: 13px; }
+.mp-area-option small { font-size: 11px; }
+
+.mp-area-detail > span { font-size: 10px; }
+.mp-area-detail h3 { font-size: 16px; }
+.mp-area-detail dt { font-size: 11px; }
+.mp-area-detail dd { font-size: 12px; }
+
+/* Studio */
+.mp-studio-panel h3 { font-size: 17px; }
+.mp-studio-panel > p { font-size: 12px; }
+
+.mp-studio-list strong,
+.mp-improvement-list strong { font-size: 13px; }
+
+.mp-studio-list small,
+.mp-improvement-list small { font-size: 11px; }
+
+.mp-diagnostic span,
+.mp-selection-detail > span { font-size: 10px; }
+
+.mp-diagnostic p { font-size: 12px; }
+.mp-selection-detail > strong { font-size: 13px; }
+
+/* Visualisation */
+.mp-viz-toolbar strong { font-size: 13px; }
+.mp-viz-toolbar > label { font-size: 11px; }
+.mp-viz-toolbar select { font-size: 12px; }
+
+.mp-infra-label { font-size: 12px; }
+.mp-infra-label span { font-size: 10px; }
+
+.mp-viz-data span { font-size: 10px; }
+.mp-viz-data strong { font-size: 13px; }
+
+/* Recommendations */
+.mp-recommendation-card header small { font-size: 10px; }
+.mp-recommendation-card h3 { font-size: 16px; }
+.mp-recommendation-card > p { font-size: 13px; }
+
+.mp-rec-facts span,
+.mp-rec-analysis span { font-size: 10px; }
+
+.mp-rec-facts strong { font-size: 13px; }
+.mp-rec-analysis p { font-size: 12px; }
+
+/* Simulation */
+.mp-sim-controls h3 { font-size: 17px; }
+.mp-sim-controls > label { font-size: 12px; }
+
+.mp-range b { font-size: 11px; }
+.mp-range strong { font-size: 13px; }
+
+.mp-sim-summary h2 { font-size: 22px; }
+.mp-sim-summary p { font-size: 13px; }
+
+.mp-metric-grid header { font-size: 10px; }
+.mp-big-values span,
+.mp-big-values b { font-size: 14px; }
+
+/* Sustainability */
+.mp-sustain-hero h2 { font-size: 26px; }
+.mp-sustain-hero p { font-size: 13px; }
+
+.mp-sustain-score strong { font-size: 30px; }
+.mp-sustain-score span { font-size: 11px; }
+
+.mp-sustain-grid article > span,
+.mp-sustain-grid article > small { font-size: 12px; }
+
+.mp-sustain-grid article > strong { font-size: 25px; }
+
+.mp-benefit { font-size: 13px; }
+.mp-action-row span,
+.mp-action-row p { font-size: 12px; }
+
+/* Reports */
+.mp-report-options h3,
+.mp-report-status h3 { font-size: 16px; }
+
+.mp-report-options > label { font-size: 12px; }
+
+.mp-paper-title h1 { font-size: 28px; }
+.mp-paper-title p { font-size: 12px; }
+.mp-paper section p { font-size: 11px; }
+
+.mp-report-status > div strong { font-size: 12px; }
+.mp-report-status > div small { font-size: 10px; }
+.mp-report-status > p { font-size: 11px; }
+
+/* Satellite view controls */
+.scene-map-controls button { font-size: 13px; }
+
+@media (max-width: 600px) {
+  .mp-page-header h1 { font-size: 25px; }
+  .mp-hero-copy h2 { font-size: 25px; }
+  .mp-hero-copy > p { font-size: 13px; }
+}
